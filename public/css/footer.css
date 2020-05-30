@@ -1,0 +1,16 @@
+
+footer{
+    /* bottom: 0;*/
+    width: 100%; 
+    /* background: rgb(0, 150, 69); */
+    /* background: rgba(0,150,69,0.91); */
+    background: none;
+    color: white;
+    text-align: center;
+ }
+
+hr{
+    border: 3px solid rgba(0,150,69,0.91);
+    border-radius: 5px;
+ }
+

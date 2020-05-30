@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Planilla de Turnos</title>
+        <link rel="stylesheet" href="css/contenido.css">
+        <link rel="stylesheet" href="css/footer.css">
+        <link rel="stylesheet" href="css/cabecera.css">
+        <link rel="Shortcut Icon" href="img/favicon.ico" type=”image/x-icon” />
+    </head>
+    <body>
+        <main>
+            {% include 'estructura/cabecera.view.php' %}
+            <section class="contenedor_principal"> 
+
+            <form action="/ver_turno_reservado" method='POST'>
+            <h1>Planilla de Turnos de Pacientes</h1>
+            <table id="turnos">
+                <tr>
+                    <th>Fecha del Turno</th>
+                    <th>Horario del Turno</th>
+                    <th>Nombre del Paciente</th>
+                    <th>Telefono</th>
+                    <th>Email</th>
+                    <th>Consulta de Turno</th>
+                </tr>
+                {% for item, value in lista_turnos %}            
+                    <tr>
+                        <td>{{ lista_turnos[item].fecha_turno }}</td>
+                        <td>{{ lista_turnos[item].hora_turno}}</td> 
+                        <td>{{ lista_turnos[item].nombre_paciente}}</td> 
+                        <td>{{ lista_turnos[item].telefono}}</td> 
+                        <td>{{ lista_turnos[item].email}}</td> 
+                        <td><button class="boton" type="submit" name="id_turno" value='{{ lista_turnos[item].id }}' >Ver Turno</button></td>
+                    </tr>                    
+                {% endfor %}
+            </table>
+            </form>
+        </section>
+    
+        </main>
+        {% include "estructura/footer.view.php" %}
+    </body>
+</html>
