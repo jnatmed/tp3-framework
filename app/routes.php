@@ -1,7 +1,7 @@
  <?php
 
     $router->get('', 'form_controller@mostrarFormulario');
-    $router->get('planilla_turnos', 'planilla.turnos.controller@verPlanillaTurnos');
+    $router->get('planilla_turnos', 'planillaTurnosController@verPlanillaTurnos');
    //  $router->get('contact', 'PagesController@contact');
 
    //  $router->get('users', 'UsersController@index');

@@ -2,14 +2,14 @@
 <html>
     <head>
         <title>Planilla de Turnos</title>
-        <link rel="stylesheet" href="css/contenido.css">
-        <link rel="stylesheet" href="css/footer.css">
-        <link rel="stylesheet" href="css/cabecera.css">
+        <link rel="stylesheet" href="public/css/contenido.css">
+        <link rel="stylesheet" href="public/css/footer.css">
+        <link rel="stylesheet" href="public/css/cabecera.css">
         <link rel="Shortcut Icon" href="img/favicon.ico" type=”image/x-icon” />
     </head>
     <body>
         <main>
-            {% include 'estructura/cabecera.view.php' %}
+            {% include 'partials/cabecera.view.php' %}
             <section class="contenedor_principal"> 
 
             <form action="/ver_turno_reservado" method='POST'>
@@ -38,6 +38,6 @@
         </section>
     
         </main>
-        {% include "estructura/footer.view.php" %}
+        {% include "partials/footer.view.php" %}
     </body>
 </html>

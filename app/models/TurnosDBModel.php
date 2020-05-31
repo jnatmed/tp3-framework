@@ -1,10 +1,10 @@
 <?php
-namespace App\models;
+namespace App\Models;
 
 require 'vendor/autoload.php';
 
 use PDO;
-use \App\controlador\imagenController;
+use \App\Controllers\imagenController;
 
 use \Monolog\Logger;
 use \Monolog\Handler\RotatingFileHandler;
@@ -30,9 +30,12 @@ class TurnosDBModel
         $this->logger->pushHandler(new RotatingFileHandler('logs/LogABMTurnosDataBase.log'), 7);
         $this->logger->pushHandler(new BrowserConsoleHandler());
 
-        $this->dsn = sprintf("mysql:host=%s;dbname=%s", $this->params['host'], $this->params['db']);
+        $this->dsn = sprintf("%s;dbname=%s", $this->params['database']['connection'], $this->params['database']['name']);
+        // echo ("<pre>");
+        // var_dump($this->dsn);
+        // exit(0);
         try {
-            $this->db = new PDO($this->dsn, $this->params['user'],$this->params['pwd']);    
+            $this->db = new PDO($this->dsn, $this->params['database']['username'],$this->params['database']['password']);    
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (\Throwable $th) {
             echo ("<pre>");

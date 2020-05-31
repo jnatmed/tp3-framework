@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 // include 'models/TurnosDBModel.php';
 include 'app/controllers/imagenController.php';
-include 'app/controllers/planilla.turnos.controller.php';
+include 'app/controllers/planillaTurnosController.php';
 
 use \App\models\TurnosDBModel;
 use \App\controllers\imagenController;
