@@ -70,16 +70,16 @@ class TurnosDBModel
         // var_dump($id_turno);
         $sql = "SELECT * FROM turnos WHERE id ='{$id_turno}'";
         try{
-            foreach ($this->db->query($sql) as $res){
-                $resu[] = $res;
-            }    
-
-        // echo("<pre>");
-        // echo("getTurnoSeleccionado<br>");
-        // var_dump($resu);
-        // exit();
-
-            return $resu;
+            $result = $this->db->query($sql);
+            $result->setFetchMode(PDO::FETCH_ASSOC);
+            foreach ($result as $res){
+                $turno[] = $res;
+            }
+            // echo("<pre>");
+            // echo("getTurnoSeleccionado<br>");
+            // var_dump($resu);
+            // exit();
+            return $turno;
             $this->db = NULL;    
         }catch(Exception $e){
             echo($e);
@@ -106,26 +106,42 @@ class TurnosDBModel
                                         `color_pelo`, 
                                         `imagen`,
                                         `tipo_imagen`) VALUES (NULL,
-                                                        '{$valores['fecha_turno']}',
-                                                        '{$valores['hora_turno']}',
-                                                        '{$valores['nombre_paciente']}',
-                                                        '{$valores['email']}',
-                                                        '{$valores['telefono']}',
-                                                        '{$valores['fecha_nacimiento']}',
-                                                        '{$valores['edad']}',
-                                                        '{$valores['talla_calzado']}',
-                                                        '{$valores['altura']}',
-                                                        '{$valores['color_pelo']}',
-                                                        '{$valores['dir_img']}',
-                                                        '{$valores['tipo_imagen']}')";
+                                                         :fecha_turno,
+                                                         :hora_turno,
+                                                         :nombre_paciente,
+                                                         :email,
+                                                         :telefono,
+                                                         :fecha_nacimiento,
+                                                         :edad,
+                                                         :talla_calzado,
+                                                         :altura,
+                                                         :color_pelo,
+                                                         :archivo_imagen,
+                                                         :tipo_imagen)";    
+
+        $array_consulta = [
+            ':fecha_turno' => $valores['fecha_turno'],
+            ':hora_turno' => $valores['hora_turno'],
+            ':nombre_paciente' => $valores['nombre_paciente'],
+            ':email' => $valores['email'],
+            ':telefono' => $valores['telefono'],
+            ':fecha_nacimiento' => $valores['fecha_nacimiento'],
+            ':edad' => $valores['edad'],
+            ':talla_calzado' => $valores['talla_calzado'],
+            ':altura' => $valores['altura'],
+            ':color_pelo' => $valores['color_pelo'],
+            ':archivo_imagen' => $valores['archivo_imagen'],
+            ':tipo_imagen' => $valores['tipo_imagen']   
+        ];    
         try{
-            $this->motrarMsj($consulta);
+            // $this->motrarMsj($consulta);
             // echo($consulta);
             $sql = $this->db->prepare($consulta);
-            $sql->execute();    
-            unset($valores['dir_img']);
-            unset($valores['tipo_imagen']);
+            $sql->execute($array_consulta);    
             // $this->logger->info();   
+            unset($valores['archivo_imagen']);
+            unset($valores['tipo_imagen']);
+            unset($valores['enviar']);
             $this->logger->info("ALTA TURNO: ", $valores);
         }catch(Exception $e){
             echo($e);        

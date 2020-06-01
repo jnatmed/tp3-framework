@@ -10,21 +10,30 @@ class imagenController
     public $imagenCodificada;
     public $tiposPermitidos = ['jpg','png','jpeg'];
     public $extension;
+    public $archivoImagen;
     public $maximo_tamanio_imagen_valido;
     const MAXIMO_TAMANIO_IMAGEN = 10;
 
-    public function __construct($array_FILES = NULL)
+    public function __construct($paramsImagen = NULL)
     {
-        if (isset($array_FILES)){
-            $this->extensionImagen = $array_FILES['imagen_receta']['type'];
-            $this->tamanioImagen = $array_FILES['imagen_receta']['size'];
-            $this->nombreImagen = $array_FILES['imagen_receta']['tmp_name'];
+        if (isset($paramsImagen)){
+            $this->extensionImagen = $paramsImagen['extension'];
+            $this->tamanioImagen = $paramsImagen['tamanio'];
+            $this->archivoImagen = $paramsImagen['archivo'];
         }else{
             $this->extensionImagen = "";
             $this->tamanioImagen = 0;
             $this->nombreImagen = "";
         }
         $this->setMaximo_tamanio_imagen_valido(floatval(self::MAXIMO_TAMANIO_IMAGEN));
+    }
+
+    public function setArchivoImagen($archivo){
+        $this->archivoImagen = $archivo;
+    }
+
+    public function getArchivoImagen(){
+        return $this->archivoImagen;
     }
 
     public function controlTamanioMaximoImagen(){

@@ -6,6 +6,7 @@ namespace App\Controllers;
 include 'app/controllers/imagenController.php';
 include 'app/controllers/planillaTurnosController.php';
 
+use App\Core\App;
 use \App\models\TurnosDBModel;
 use \App\controllers\imagenController;
 use \App\controllers\planillaTurnosController;
@@ -176,16 +177,25 @@ class form_controller
             $this->datos_mal_cargados[] = '#ERROR FECHA TURNO: la fecha del turno debe ser superior o igual al dia actual';    
         }
 
+        $paramsImagen = [
+            'extension' => pathinfo($_FILES["imagen_receta"]["name"], PATHINFO_EXTENSION),
+            'tamanio' => $_FILES['imagen_receta']['size'],
+            'archivo' => file_get_contents($_FILES['imagen_receta']['tmp_name'])
+        ];
 
-        $this->imgController = new imagenController($_FILES);
+        $this->imgController = new imagenController($paramsImagen);
+
+        // echo("<pre>");
+        // var_dump($this->imgController);
+        // exit(0);
 
         if ($this->imgController->imagenCargada()){
             if($this->imgController->controlTamanioMaximoImagen()){
                 if($this->imgController->controlTipoImagenValida()){
-                    $this->imgController->codificar();
-                    $this->datos_reserva['dir_img'] = $this->imgController->getImagenCodificada();
+                    // $this->imgController->codificar();
+                    // $this->datos_reserva['dir_img'] = $this->imgController->getImagenCodificada();
                     $this->datos_reserva['tipo_imagen'] = $this->imgController->getTipoImagen();
-                    $this->imgController->devolverPathImagen($this->datos_reserva['dir_img']);                
+                    $this->datos_reserva['archivo_imagen'] = $this->imgController->getArchivoImagen();
                 }else{
                     $this->datos_mal_cargados[] = "#ERROR IMAGEN: Tipo de imagen no valido.";
                 }    
@@ -196,23 +206,6 @@ class form_controller
             echo("Imagen no cargada");
         } 
 
-        if ($this->buscarFechaTurno($this->datos_reserva['fecha_turno'],$this->datos_reserva['hora_turno'])){
-            $this->datos_mal_cargados[] =  "#ERROR FECHA Y HORA TURNO: La fecha y turno cargados ya fueron asignados a otro paciente.";    
-        }
-
-    }
-
-    public function buscarFechaTurno($fecha_turno, $hora_turno)
-    {
-        $existeTurno = false;
-        foreach ($this->planillaTurnos as $id_turno => $turno):
-
-            if ($turno['fecha_turno'] == $fecha_turno && $turno['hora_turno'] == $hora_turno)
-            {
-                $existeTurno = true;
-            }
-        endforeach;
-        return $existeTurno;
     }
 
     public function guardarTurnoModificado(){
@@ -231,18 +224,28 @@ class form_controller
         // salida:
         // - $this->datos_mal_cargados, con los errores encontrados
         // - obj imgController con los datos de la imagen cargada 
-        $this->controlFormulario($_POST,$_FILES); //     
+        $this->controlFormulario($_POST,$_FILES); // 
+        
+        // echo("<pre>");
+        // var_dump($this->datos_reserva);
+        // exit(0);
 
         include "app/views/confirmar.turno.view.php";
     }
 
-    public function guardarTurnoConfirmado($turno)
+    public function guardarTurnoConfirmado()
     {
         // echo("<pre>");
         // echo("guardarTurnoConfirmado<br>");
         // var_dump($turno);
         // exit();        
-        $this->dbturnos->insertarTurno($turno);
+        $this->dbturnos->insertarTurno($_POST);
+    }
+
+    public function verPlanillaTurnos(){
+
+        return view('listadoTurnosView', array('lista_turnos' => $this->dbturnos->getTurnos()));
+
     }
 
     public function reservarTurno()
@@ -253,9 +256,13 @@ class form_controller
         // exit();
 
         if (array_key_exists('enviar',$_POST)){
-            $this->carga_arreglo($_POST,$_POST['dir_img'], $_POST['tipo_imagen']);
-            $this->guardarTurnoConfirmado($this->datos_reserva);
-            $this->planillaController->verPlanillaTurnos();
+            // $this->carga_arreglo($_POST,$_POST['dir_img'], $_POST['tipo_imagen']);
+            $this->guardarTurnoConfirmado($_POST);
+        // echo("<pre>");
+        // echo("reservarTurno--<br>");
+        // var_dump($_POST);
+
+            $this->verPlanillaTurnos();
         }else{
             $this->corregirIngreso();
         }
