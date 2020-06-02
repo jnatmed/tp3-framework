@@ -23,14 +23,14 @@
                     <th>Email</th>
                     <th>Consulta de Turno</th>
                 </tr>
-                {% for item, value in lista_turnos %}            
+                {% for turno in lista_turnos %}            
                     <tr>
-                        <td>{{ lista_turnos[item].fecha_turno }}</td>
-                        <td>{{ lista_turnos[item].hora_turno}}</td> 
-                        <td>{{ lista_turnos[item].nombre_paciente}}</td> 
-                        <td>{{ lista_turnos[item].telefono}}</td> 
-                        <td>{{ lista_turnos[item].email}}</td> 
-                        <td><button class="boton" type="submit" name="id_turno" value='{{ lista_turnos[item].id }}' >Ver Turno</button></td>
+                        <td>{{ turno.fecha_turno }}</td>
+                        <td>{{ turno.hora_turno}}</td> 
+                        <td>{{ turno.nombre_paciente}}</td> 
+                        <td>{{ turno.telefono}}</td> 
+                        <td>{{ turno.email}}</td> 
+                        <td><button class="boton" type="submit" name="id_turno" value='{{ turno.id }}' >Ver Turno</button></td>
                     </tr>                    
                 {% endfor %}
             </table>

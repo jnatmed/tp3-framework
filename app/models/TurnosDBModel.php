@@ -130,7 +130,7 @@ class TurnosDBModel
             ':talla_calzado' => $valores['talla_calzado'],
             ':altura' => $valores['altura'],
             ':color_pelo' => $valores['color_pelo'],
-            ':archivo_imagen' => $valores['archivo_imagen'],
+            ':archivo_imagen' => base64_decode($valores['archivo_imagen']),
             ':tipo_imagen' => $valores['tipo_imagen']   
         ];    
         try{
@@ -148,35 +148,51 @@ class TurnosDBModel
         }
     }
     public function actualizarTurno($valores,$img_receta){
-        // echo("<pre>");
-        // echo("insertarTurno<br>");
-        // var_dump($img_receta);
-        // exit(); 
-        $this->imgController = new imagenController($img_receta);
-        if($this->imgController->imagenCargada()){
-            $this->imgController->codificar();
-        }
+        echo("<pre>");
+        echo("insertarTurno<br>");
+        var_dump($img_receta);
+        exit(); 
+        // $this->imgController = new imagenController($img_receta);
+        // if($this->imgController->imagenCargada()){
+        //     $this->imgController->codificar();
+        // }
         $consulta = "UPDATE `turnos` SET 
-                            `fecha_turno`='{$valores['Fecha_del_turno']}',
-                            `hora_turno`='{$valores['Horario_del_turno']}',
-                            `nombre_paciente`='{$valores['Nombre_del_Paciente']}',
-                            `email`='{$valores['Email']}',
-                            `telefono`='{$valores['Telefono']}',
-                            `fecha_nacimiento`='{$valores['Fecha_de_nacimiento']}',
-                            `edad`='{$valores['Edad']}',
-                            `talla_calzado`='{$valores['Talla_de_calzado']}',
-                            `altura`='{$valores['altura']}',
-                            `color_pelo`='{$valores['Color_de_pelo']}', 
-                            `imagen`='{$this->imgController->getImagenCodificada()}',
-                            `tipo_imagen`='{$this->imgController->getTipoImagen()}' WHERE id = '{$valores['id']}'";
+                            `fecha_turno`=':fecha_turno',
+                            `hora_turno`=':hora_turno',
+                            `nombre_paciente`=':nombre_paciente',
+                            `email`=':email',
+                            `telefono`=':telefono',
+                            `fecha_nacimiento`=':fecha_nacimiento',
+                            `edad`=':edad',
+                            `talla_calzado`=':talla_calzado',
+                            `altura`=':altura',
+                            `color_pelo`=':color_pelo', 
+                            `imagen`=':archivo_imagen',
+                            `tipo_imagen`=':tipo_imagen' WHERE id = ':id'";
+
+        $array_consulta = [
+            ':fecha_turno' => $valores['fecha_turno'],
+            ':hora_turno' => $valores['hora_turno'],
+            ':nombre_paciente' => $valores['nombre_paciente'],
+            ':email' => $valores['email'],
+            ':telefono' => $valores['telefono'],
+            ':fecha_nacimiento' => $valores['fecha_nacimiento'],
+            ':edad' => $valores['edad'],
+            ':talla_calzado' => $valores['talla_calzado'],
+            ':altura' => $valores['altura'],
+            ':color_pelo' => $valores['color_pelo'],
+            ':archivo_imagen' => base64_decode($valores['archivo_imagen']),
+            ':tipo_imagen' => $valores['tipo_imagen']   
+        ]; 
         try{
             // $this->motrarMsj($consulta);
             // $p = explode("'imagen'",$consulta);
             // echo($p[0]);
             $sql = $this->db->prepare($consulta);
             // $sql->execute($valores);    
-            $sql->execute(); 
-            unset($valores['dir_img']);
+            $sql->execute($array_consulta);    
+            unset($valores['archivo_imagen']);
+            unset($valores['tipo_imagen']);
             unset($valores['corregir_turno']);
             $this->logger->info("MODIFICACION TURNO:",$valores);   
         }catch(Exception $e){

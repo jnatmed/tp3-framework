@@ -50,7 +50,7 @@ class planillaTurnosController
         // exit();
 
         $this->turno[0]['imagen'] = base64_encode($this->turno[0]['imagen']); 
-
+                
         return view('consulta.turno.view', array('turno' => $this->turno[0]));
 
     }

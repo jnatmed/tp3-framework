@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Formulario de Datos del Paciente</title>
+        <link rel="stylesheet" href="public/css/contenido.css">
+        <link rel="stylesheet" href="public/css/footer.css">
+        <link rel="stylesheet" href="public/css/cabecera.css">
+        <link rel="Shortcut Icon" href="img/favicon.ico" type=”image/x-icon” />
+
+      </head>
+<body class = "contenido"> 
+   <main>
+     {% include 'partials/cabecera.view.php' %}
+     <header id="nombre_paciente">
+      <h1>Turno del Paciente: {{ dato_persona.nombre_paciente.valor }}</h1>
+     </header>
+      <section class="contenedor_principal">
+       <article class="formulario_cargado">
+
+        <form action="/save_formulario" method = 'POST' enctype="multipart/form-data" class="form_ingreso">  
+          <fieldset class="datos_del_paciente">
+            <legend> Datos del Paciente </legend>
+
+            <label for="{{ dato_persona.nombre_paciente.nombre_campo }}">Nombre del Paciente</label>
+            <input type="text" 
+                   name="{{ dato_persona.nombre_paciente.nombre_campo }}" 
+                   id="{{ dato_persona.nombre_paciente.nombre_campo }}" 
+                   {{ dato_persona.nombre_paciente.obligatorio }}>
+
+            <label for="{{ dato_persona.email.nombre_campo }}">Email</label>
+            <input type="text" 
+                   name="{{ dato_persona.email.nombre_campo }}" 
+                   id="{{ dato_persona.email.nombre_campo }}" 
+                   pattern = "{{ dato_persona.email.restriccion }}" 
+                   placeholder = "ej: pepe@servidor.com" 
+                   {{ dato_persona.email.obligatorio }}>
+
+            <label for="{{ dato_persona.telefono.nombre_campo }}">Telefono</label>
+            <input type="tel" 
+                   id="{{ dato_persona.telefono.nombre_campo }}" 
+                   name="{{ dato_persona.telefono.nombre_campo }}" 
+                   placeholder="11-3438-7233" 
+                   pattern="{{ dato_persona.telefono.restriccion}}" 
+                   {{ dato_persona.telefono.obligatorio }}>
+
+            <label for="{{ dato_persona.edad.nombre_campo }}">Edad</label>
+            <input type="number" 
+                   name="{{ dato_persona.edad.nombre_campo }}"  
+                   id="{{ dato_persona.edad.nombre_campo }}" 
+                   min="{{ dato_persona.edad.restriccion.min }}" 
+                   max="{{ dato_persona.edad.restriccion.max }}" 
+                   {{ dato_persona.edad.obligatorio }}>
+
+            <label for="{{ dato_persona.talla_calzado.nombre_campo }}">Talla de Calzado</label>
+            <input type="number" 
+                   name="{{ dato_persona.talla_calzado.nombre_campo }}" 
+                   id="{{ dato_persona.talla_calzado.nombre_campo }}" 
+                   placeholder="Entre {{ dato_persona.talla_calzado.restriccion.min }} y {{ dato_persona.talla_calzado.restriccion.max }} cm" 
+                   min="{{ dato_persona.talla_calzado.restriccion.min }}" 
+                   max="{{ dato_persona.talla_calzado.restriccion.max }}" 
+                   {{ dato_persona.altura.obligatorio }}>
+            
+            <label for="{{ dato_persona.altura.nombre_campo }}">Altura</label>
+            <input type="range" 
+                   name="{{ dato_persona.altura.nombre_campo }}" 
+                   id="{{ dato_persona.altura.nombre_campo }}" 
+                   placeholder="Entre {{ dato_persona.altura.restriccion.min }} y {{ dato_persona.altura.restriccion.max }} cm" 
+                   min="{{ dato_persona.altura.restriccion.min }}" 
+                   max="{{ dato_persona.altura.restriccion.max }}" 
+                   {{ dato_persona.altura.obligatorio }}>
+
+            <label for="{{ dato_persona.fecha_nacimiento.nombre_campo }}">Fecha de Nacimiento</label>
+            <input type="date" 
+                   name="{{ dato_persona.fecha_nacimiento.nombre_campo }}" 
+                   id="{{ dato_persona.fecha_nacimiento.nombre_campo }}" 
+                   {{ dato_persona.fecha_nacimiento.obligatorio }} >
+                           
+            <label for="{{ dato_persona.color_pelo.nombre_campo }}">Color de Pelo</label>
+            <select name="{{ dato_persona.color_pelo.nombre_campo }}">
+              {% for color in dato_persona.color_pelo.restriccion %}    
+                  <option value={{ color }}>{{ color }}</option>
+              {% endfor %}
+             </select>            
+
+          </fieldset>  
+          <fieldset class="datos_del_turno">
+            <legend> Datos del Turno</legend>
+
+            <label for="{{ dato_turno.fecha_turno.nombre_campo }}">Fecha del Turno</label>
+              <input type="date" 
+                     name="{{ dato_turno.fecha_turno.nombre_campo }}" 
+                     id="{{ dato_turno.fecha_turno.nombre_campo }}" 
+                     {{ dato_turno.fecha_turno.obligatorio }} >
+  
+            <label for="{{ dato_turno.hora_turno.nombre_campo }}">Hora del Turno</label>                     
+            <select name="{{ dato_turno.hora_turno.nombre_campo }}">
+              {% for hora in dato_turno.hora_turno.restriccion.rango_atencion %}
+                {% for minuto in dato_turno.hora_turno.restriccion.intervalos %}    
+                  <option value={{ hora }}:{{ minuto }}>{{ hora }}:{{ minuto }}</option>
+                {% endfor %}  
+              {% endfor %}
+             </select>            
+
+             <label for="imagen_receta">Imagen de la Receta</label>
+             <input type="file" name="imagen_receta" id="imagen_receta">
+
+          </fieldset>
+
+          <input class="boton" type="submit" name='enviar' value="Enviar">
+          <input class="boton" type="reset" name='limpiar' value="Limpiar">
+
+        </form>
+       </article>
+      </section>
+
+      {% include "partials/footer.view.php" %}
+
+    </main>
+</body>
+</html>

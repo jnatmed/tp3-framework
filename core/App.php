@@ -35,6 +35,10 @@ class App
             throw new Exception("No {$key} is bound in the container.");
         }
 
+        // echo("<pre>");
+        // echo("..get, Ok<br>");
+        // var_dump(static::$registry[$key]);
+    
         return static::$registry[$key];
     }
 }

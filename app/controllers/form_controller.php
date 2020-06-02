@@ -6,7 +6,6 @@ namespace App\Controllers;
 include 'app/controllers/imagenController.php';
 include 'app/controllers/planillaTurnosController.php';
 
-use App\Core\App;
 use \App\models\TurnosDBModel;
 use \App\controllers\imagenController;
 use \App\controllers\planillaTurnosController;
@@ -21,13 +20,26 @@ class form_controller
     public $planillaController = NULL; // clase planilla controller
     public $imgController = NULL; // clase que controla el ingreso correcto de la imagen
     public $dbturnos; // base de datos de turnos, donde hago las consultas de turnos y modificaciones
-    public $id_turno_update; // identificador del turno, que se pasa a la vista de "modificacion.turno.view"
     public $datos_mal_cargados; // arreglo donde cargo los errores encontrados en la carga del turno
+    public $rangos;
 
     public function __construct()
     {
         $this->planillaController = new planillaTurnosController;
         $this->dbturnos = new TurnosDBModel;
+
+        $this->rangos = [
+            'edades' => [ 'min' => '18', 
+                          'max' => '60'],
+            'talles_calzado' => [ 'min' => '20', 
+                                  'max' => '45'],
+            'alturas' => [ 'min' => '100', 
+                           'max' => '280'],
+            'colores_pelo' => [ 'rubio' , 'negro', 'castaño' , 'marron'],
+            'horarios_atencion' => [ 'rango_atencion' => ['08', '09', '10', '11','12', '13', '14', '15', '16'],  
+                                     'intervalos' => ['00', '15', '30', '45']]
+        ];
+
     }
 
     public function carga_arreglo($datosTurno, $pathImg = "", $tipo_imagen = "")
@@ -35,32 +47,32 @@ class form_controller
         // echo("<pre>");
         // var_dump($datosTurno);
         // exit(); 
-        $this->datos_reserva['nombre_paciente'] = $datosTurno['Nombre_del_Paciente'];
-        $this->datos_reserva['email'] = $datosTurno['Email'];
-        $this->datos_reserva['telefono'] = $datosTurno['Telefono'];
-        $this->datos_reserva['edad'] = intval($datosTurno['Edad']); 
-        $this->datos_reserva['talla_calzado'] = $datosTurno['Talla_de_calzado'];
+        $this->datos_reserva['nombre_paciente'] = $datosTurno['nombre_paciente'];
+        $this->datos_reserva['email'] = $datosTurno['email'];
+        $this->datos_reserva['telefono'] = $datosTurno['telefono'];
+        $this->datos_reserva['edad'] = intval($datosTurno['edad']); 
+        $this->datos_reserva['talla_calzado'] = $datosTurno['talla_calzado'];
         $this->datos_reserva['altura'] = $datosTurno['altura'];
-        $this->datos_reserva['fecha_nacimiento'] = $datosTurno['Fecha_de_nacimiento'];
-        $this->datos_reserva['color_pelo'] = $datosTurno['Color_de_pelo'];
-        $this->datos_reserva['fecha_turno'] = $datosTurno['Fecha_del_turno'];
-        $this->datos_reserva['hora_turno'] = $datosTurno['Horario_del_turno'];
-        $this->datos_reserva['dir_img'] = $pathImg;    
+        $this->datos_reserva['fecha_nacimiento'] = $datosTurno['fecha_nacimiento'];
+        $this->datos_reserva['color_pelo'] = $datosTurno['color_pelo'];
+        $this->datos_reserva['fecha_turno'] = $datosTurno['fecha_turno'];
+        $this->datos_reserva['hora_turno'] = $datosTurno['hora_turno'];
         $this->datos_reserva['tipo_imagen'] = $tipo_imagen;    
     }
 
     public function mostrarFormulario()
     {
-        $this->agregar_dato('Nombre del Paciente','required','nombre','[a-zA-Z]+');
-        $this->agregar_dato('Email', 'required','email','[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$');
-        $this->agregar_dato('Telefono', 'required','tel','[0-1]{2}-[0-9]{4}-[0-9]{4}');
-        $this->agregar_dato('Edad', '', 'edad','18-60');
-        $this->agregar_dato('Talla de calzado', '', 'calzado','20-45');
-        $this->agregar_dato('altura', '','altura','1-3');
-        $this->agregar_dato('Fecha de nacimiento', 'required','date');
-        $this->agregar_dato('Color de pelo','required','pelo','rubio-negro-castaño-marron');
-        $this->agregar_dato('Fecha del turno', 'required','date');
-        $this->agregar_dato('Horario del turno', '', 'horario_turno','8-17-15');
+
+        $this->agregar_dato('nombre_paciente','required','nombre','');
+        $this->agregar_dato('email', 'required','email','[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$');
+        $this->agregar_dato('telefono', 'required','tel','[0-1]{2}-[0-9]{4}-[0-9]{4}');
+        $this->agregar_dato('edad', '', 'edad',$this->rangos['edades']);
+        $this->agregar_dato('talla_calzado', '', 'calzado',$this->rangos['talles_calzado']);
+        $this->agregar_dato('altura', '','altura',$this->rangos['alturas']);
+        $this->agregar_dato('fecha_nacimiento', 'required','date');
+        $this->agregar_dato('color_pelo','required','pelo',$this->rangos['colores_pelo']);
+        $this->agregar_dato('fecha_turno', 'required','date');
+        $this->agregar_dato('hora_turno', '', 'horario_turno',$this->rangos['horarios_atencion']);
 
         // echo("<pre>");
         // echo("mostrarFormulario<br>");
@@ -68,45 +80,62 @@ class form_controller
         // var_dump($this->lista_datos_del_turno);
         // exit();
         
+        $arreglo = [
+            'dato_persona' => $this->lista_datos, 
+            'dato_turno' => $this->lista_datos_del_turno
+        ];
 
-        include "app/views/nuevo.turno.view.php";
+        return view('nuevo.turno.view', $arreglo);
     }
 
     public function corregirIngreso(){
 
-        $this->agregar_dato('Nombre del Paciente','required','nombre','[a-zA-Z]+',$_POST['Nombre_del_Paciente']);
-        $this->agregar_dato('Email', 'required','email','[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$',$_POST['Email']);
-        $this->agregar_dato('Telefono', 'required','tel','[0-1]{2}-[0-9]{4}-[0-9]{4}',$_POST['Telefono']);
-        $this->agregar_dato('Edad', '', 'edad','18-60',$_POST['Edad']);
-        $this->agregar_dato('Talla de calzado', '', 'calzado','20-45',$_POST['Talla_de_calzado']);
-        $this->agregar_dato('altura', '','altura','1-3', $_POST['altura']);
-        $this->agregar_dato('Fecha de nacimiento', 'required','date','',$_POST['Fecha_de_nacimiento']);
-        $this->agregar_dato('Color de pelo','required','pelo','rubio-negro-castaño-marron',$_POST['Color_de_pelo']);
-        $this->agregar_dato('Fecha del turno', 'required','date','',$_POST['Fecha_del_turno']);
-        $this->agregar_dato('Horario del turno', '', 'horario_turno','8-17-15',$_POST['Horario_del_turno']);
+        $this->agregar_dato('nombre_paciente','required','nombre','',$_POST['nombre_paciente']);
+        $this->agregar_dato('email', 'required','email','[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$',$_POST['email']);
+        $this->agregar_dato('telefono', 'required','tel','[0-1]{2}-[0-9]{4}-[0-9]{4}',$_POST['telefono']);
+        $this->agregar_dato('edad', '', 'edad',$this->rangos['edades'],$_POST['edad']);
+        $this->agregar_dato('talla_calzado', '', 'calzado',$this->rangos['talles_calzado'],$_POST['talla_calzado']);
+        $this->agregar_dato('altura', '','altura',$this->rangos['alturas'], $_POST['altura']);
+        $this->agregar_dato('fecha_nacimiento', 'required','date','',$_POST['fecha_nacimiento']);
+        $this->agregar_dato('color_pelo','required','pelo',$this->rangos['colores_pelo'],$_POST['color_pelo']);
+        $this->agregar_dato('fecha_turno', 'required','date','',$_POST['fecha_turno']);
+        $this->agregar_dato('hora_turno', '', 'horario_turno',$this->rangos['horarios_atencion'],$_POST['hora_turno']);
 
-        include "app/views/modificar.turno.view.php";
+        $arreglo = [
+            'dato_persona' => $this->lista_datos, 
+            'dato_turno' => $this->lista_datos_del_turno, 
+            'id' => -1,
+            'tipo_imagen' => pathinfo($_FILES["imagen_receta"]["name"], PATHINFO_EXTENSION),
+            'archivo_imagen' => base64_encode(file_get_contents($_FILES['imagen_receta']['tmp_name']))
+        ];
 
+        // echo("<pre>");
+        // echo("modificacionTurno => arreglo<br>");
+        // var_dump($arreglo);
+        // exit();
+
+        return view('modificar.turno.view', $arreglo);
     }
 
     public function modificacionTurno(){
         $valores = [];
         
         $valores = $this->dbturnos->getTurnoSeleccionado($_POST['modificacion_turno']);
+        $valores = $valores[0];
         // echo("<pre>");
         // echo("modificacionTurno<br>");
         // var_dump($valores);
         // exit();
-        $this->agregar_dato('Nombre del Paciente','required','nombre','[a-zA-Z]+',$valores[0]['nombre_paciente']);
-        $this->agregar_dato('Email', 'required','email','[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$',$valores[0]['email']);
-        $this->agregar_dato('Telefono', 'required','tel','[0-1]{2}-[0-9]{4}-[0-9]{4}',$valores[0]['telefono']);
-        $this->agregar_dato('Edad', '', 'edad','18-60',$valores[0]['edad']);
-        $this->agregar_dato('Talla de calzado', '', 'calzado','20-45',$valores[0]['talla_calzado']);
-        $this->agregar_dato('altura', '','altura','1-3', $valores[0]['altura']);
-        $this->agregar_dato('Fecha de nacimiento', 'required','date','',$valores[0]['fecha_nacimiento']);
-        $this->agregar_dato('Color de pelo','required','pelo','rubio-negro-castaño-marron',$valores[0]['color_pelo']);
-        $this->agregar_dato('Fecha del turno', 'required','date','',$valores[0]['fecha_turno']);
-        $this->agregar_dato('Horario del turno', '', 'horario_turno','8-17-15',$valores[0]['hora_turno']);
+        $this->agregar_dato('nombre_paciente','required','nombre','',$valores['nombre_paciente']);
+        $this->agregar_dato('email', 'required','email','[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$',$valores['email']);
+        $this->agregar_dato('telefono', 'required','tel','[0-1]{2}-[0-9]{4}-[0-9]{4}',$valores['telefono']);
+        $this->agregar_dato('edad', '', 'edad',$this->rangos['edades'],$valores['edad']);
+        $this->agregar_dato('talla_calzado', '', 'calzado',$this->rangos['talles_calzado'],$valores['talla_calzado']);
+        $this->agregar_dato('altura', '','altura',$this->rangos['alturas'], $valores['altura']);
+        $this->agregar_dato('fecha_nacimiento', 'required','date','',$valores['fecha_nacimiento']);
+        $this->agregar_dato('color_pelo','required','pelo',$this->rangos['colores_pelo'],$valores['color_pelo']);
+        $this->agregar_dato('fecha_turno', 'required','date','',$valores['fecha_turno']);
+        $this->agregar_dato('hora_turno', '', 'horario_turno',$this->rangos['horarios_atencion'],$valores['hora_turno']);
         
         // echo("<pre>");
         // echo("modificacionTurno<br>");
@@ -114,23 +143,25 @@ class form_controller
         // var_dump($this->lista_datos_del_turno);
         // exit();
 
-        $this->id_turno_update = $_POST['modificacion_turno'];
+        $arreglo = [
+            'dato_persona' => $this->lista_datos, 
+            'dato_turno' => $this->lista_datos_del_turno, 
+            'id' => $_POST['modificacion_turno'],
+            'archivo_imagen' => base64_encode($valores['imagen']),
+            'tipo_imagen' => $valores['tipo_imagen']            
+        ];
 
-        $this->imgController = new imagenController();
-        if($valores[0]['imagen'] <> ''){
-            $this->imgController->setTipoImagen($valores[0]['tipo_imagen']);
-            $this->imgController->controlTipoImagenValida();
-            $this->imgController->devolverPathImagen($valores[0]['imagen']);
-        }
+        // echo("<pre>");
+        // echo("modificacionTurno => arreglo<br>");
+        // var_dump($arreglo);
+        // exit();
 
-
-
-        include "app/views/modificar.turno.view.php";
+        return view('modificar.turno.view', $arreglo);
     }
 
     public function agregar_dato($nombre_campo, $obligatorio = '', $tipo, $restriccion='', $valor = '')
     {
-        $arreglo_nombre_campos = ['Fecha del turno','Horario del turno'];
+        $arreglo_nombre_campos = ['fecha_turno','hora_turno'];
 
         $this->tipo_restriccion['nombre_campo'] = $nombre_campo;
         $this->tipo_restriccion['obligatorio'] = $obligatorio;
@@ -140,10 +171,10 @@ class form_controller
 
 
         if (in_array($this->tipo_restriccion['nombre_campo'],$arreglo_nombre_campos)){
-            $this->lista_datos_del_turno[] = $this->tipo_restriccion;
+            $this->lista_datos_del_turno[$nombre_campo] = $this->tipo_restriccion;
             
         }else{
-            $this->lista_datos[] = $this->tipo_restriccion;
+            $this->lista_datos[$nombre_campo] = $this->tipo_restriccion;
         }
     }
 
@@ -160,10 +191,10 @@ class form_controller
         $this->carga_arreglo($_POST);
 
         $fecha_actual = strtotime(date("d-m-Y",time()));
-        $fecha_turno = strtotime(date("d-m-Y",strtotime($_POST['Fecha_del_turno'])));
-        $fecha_nacimiento = date("d-m-Y H:i:00",strtotime($_POST['Fecha_de_nacimiento']));
-        $año_nacimiento = intval(date("o",strtotime($_POST['Fecha_de_nacimiento'])));
-        $edad_ingresada = $this->datos_reserva['edad'];
+        $fecha_turno = strtotime(date("d-m-Y",strtotime($_POST['fecha_turno'])));
+        $fecha_nacimiento = date("d-m-Y H:i:00",strtotime($_POST['fecha_nacimiento']));
+        $año_nacimiento = intval(date("o",strtotime($_POST['fecha_nacimiento'])));
+        $edad_ingresada = $_POST['edad'];
         $año_actual = intval(date("o",time()));
         $dia_turno = date("l",$fecha_turno);
 
@@ -192,8 +223,6 @@ class form_controller
         if ($this->imgController->imagenCargada()){
             if($this->imgController->controlTamanioMaximoImagen()){
                 if($this->imgController->controlTipoImagenValida()){
-                    // $this->imgController->codificar();
-                    // $this->datos_reserva['dir_img'] = $this->imgController->getImagenCodificada();
                     $this->datos_reserva['tipo_imagen'] = $this->imgController->getTipoImagen();
                     $this->datos_reserva['archivo_imagen'] = $this->imgController->getArchivoImagen();
                 }else{
@@ -206,6 +235,33 @@ class form_controller
             echo("Imagen no cargada");
         } 
 
+    }
+
+    public function edicion_turno(){
+        if(isset($_POST['baja_turno'])){
+            $this->bajaTurnoReservado();
+        }else if(isset($_POST['modificacion_turno'])){
+            // echo("<pre>");
+            // echo("modificacion<br>");
+            // var_dump($_POST['modificacion_turno']);
+            // exit(0);
+            $this->modificacionTurno();
+        }else{
+            echo("<pre>");
+            echo("ninguna opcion");
+            var_dump($_POST['modificacion_turno']);
+            exit(0);
+        }
+    }
+
+    public function bajaTurnoReservado()
+    {
+        // echo("<pre>");    
+        // echo("bajaTurnoReservado<br>");    
+        // var_dump($_POST);
+        // exit();
+        $this->turno = $this->dbturnos->bajaTurnoSeleccionado($_POST);
+        $this->verPlanillaTurnos();
     }
 
     public function guardarTurnoModificado(){
@@ -229,8 +285,14 @@ class form_controller
         // echo("<pre>");
         // var_dump($this->datos_reserva);
         // exit(0);
+        $arreglo = [
+            'turno' => $this->datos_reserva,
+            'datos_mal_cargados' => $this->datos_mal_cargados,
+            'tipo_imagen' => pathinfo($_FILES["imagen_receta"]["name"], PATHINFO_EXTENSION),
+            'archivo_imagen' => base64_encode(file_get_contents($_FILES['imagen_receta']['tmp_name']))
+        ];
 
-        include "app/views/confirmar.turno.view.php";
+        return view('confirmar.turno.view', $arreglo);
     }
 
     public function guardarTurnoConfirmado()
@@ -256,7 +318,6 @@ class form_controller
         // exit();
 
         if (array_key_exists('enviar',$_POST)){
-            // $this->carga_arreglo($_POST,$_POST['dir_img'], $_POST['tipo_imagen']);
             $this->guardarTurnoConfirmado($_POST);
         // echo("<pre>");
         // echo("reservarTurno--<br>");

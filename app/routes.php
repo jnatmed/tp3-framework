@@ -7,7 +7,7 @@
     $router->get('planilla_turnos', 'planillaTurnosController@verPlanillaTurnos');
     $router->post('ver_turno_reservado', 'planillaTurnosController@verTurnoReservado');
 
-   //  $router->post('users', 'UsersController@store');
+    $router->post('edicion_turno', 'form_controller@edicion_turno');
 
    //  $router->get('tasks/create', 'TasksController@create');
    //  $router->post('tasks/save', 'TasksController@save');

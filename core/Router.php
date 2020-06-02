@@ -61,12 +61,6 @@ class Router
      */
     public function direct($uri, $requestType)
     {
-        // echo("<pre>");
-        // var_dump($uri);
-        // var_dump($requestType);
-        // var_dump($this->routes[$requestType]);
-        // exit(0);
-
         if (array_key_exists($uri, $this->routes[$requestType])) {
             return $this->callAction(
                 ...explode('@', $this->routes[$requestType][$uri])
@@ -86,20 +80,15 @@ class Router
     {
         $controller = "App\\Controllers\\{$controller}";
 
-        // echo("<pre>");
-        // var_dump($controller);
-        // var_dump($action);
         $controller = new $controller;
-        // exit(0);
 
-        // if (! method_exists($controller, $action)) {
-        //     // echo("{$controller} does not respond to the {$action} action.");
-        //     // exit(0);
-        //     throw new Exception(
-        //         "{$controller} does not respond to the {$action} action."
-        //     );
-        // }
-
+        if (! method_exists($controller, $action)) {
+            echo("{$controller} does not respond to the {$action} action.");
+            exit(0);
+            throw new Exception(
+                "{$controller} does not respond to the {$action} action."
+            );
+        }
         return $controller->$action();
     }
 }
