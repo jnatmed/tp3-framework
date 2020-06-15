@@ -33,14 +33,14 @@
                        name="{{ dato_persona.email.nombre_campo }}" 
                        id="{{ dato_persona.email.nombre_campo }}" 
                        value="{{ dato_persona.email.valor}}" 
-                       pattern = "{{ dato_personaemail.restriccion }}" 
+                       pattern = "{{ dato_persona.email.restriccion }}" 
                        placeholder = "ej: pepe@servidor.com" 
                        {{ dato_persona.email.obligatorio }}>
     
                 <label for="{{ dato_persona.telefono.nombre_campo }}">Telefono</label>
                 <input type="tel" 
                        id="{{ dato_persona.telefono.nombre_campo }}" 
-                       value="{{ dato_persona.telefono.value }}" 
+                       value="{{ dato_persona.telefono.valor }}" 
                        name="{{ dato_persona.telefono.nombre_campo }}" 
                        placeholder="11-3438-7233" 
                        pattern="{{ dato_persona.telefono.restriccion}}" 
@@ -87,7 +87,7 @@
                   {% for color in dato_persona.color_pelo.restriccion %}    
                       <option value={{ color }}>{{ color }}</option>
                   {% endfor %}
-                  <option value="{{ dato_persona.color_pelo.value }}" selected>{{ dato_persona.color_pelo.value }}</option>
+                  <option value="{{ dato_persona.color_pelo.valor }}" selected>{{ dato_persona.color_pelo.valor }}</option>
                  </select>            
     
              </fieldset>
@@ -98,6 +98,7 @@
                 <label for="{{ dato_turno.fecha_turno.nombre_campo }}">Fecha del Turno</label>
                 <input type="date" 
                        name="{{ dato_turno.fecha_turno.nombre_campo }}" 
+                       value="{{ dato_turno.fecha_turno.valor }}"
                        id="{{ dato_turno.fecha_turno.nombre_campo }}" 
                        {{ dato_turno.fecha_turno.obligatorio }} >
     
@@ -108,14 +109,17 @@
                       <option value={{ hora }}:{{ minuto }}>{{ hora }}:{{ minuto }}</option>
                     {% endfor %}  
                   {% endfor %}
-                  <option value="{{ dato_persona.hora_turno.value }}" selected>{{ dato_persona.hora_turno.value }}</option>
+                  <option value="{{ dato_turno.hora_turno.valor }}" selected>{{ dato_turno.hora_turno.valor }}</option>
                 </select>            
                   
                 <label for="imagen_receta">Imagen de la Receta</label>
                 <input type="file" name="imagen_receta" id="imagen_receta">
              </fieldset> 
+             
+             <input class="input_oculto" type="hidden" name="archivo_imagen" value="{{ archivo_imagen }}">
+             <input class="input_oculto" type="hidden" name="tipo_imagen" value="{{ tipo_imagen }}"  >
 
-          {% if id != -1 %}
+             {% if id != -1 %}
                 <input class="input_oculto" 
                         type="text" 
                         name ='id' 

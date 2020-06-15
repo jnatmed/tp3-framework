@@ -30,7 +30,8 @@
                         <td>{{ turno.nombre_paciente}}</td> 
                         <td>{{ turno.telefono}}</td> 
                         <td>{{ turno.email}}</td> 
-                        <td><button class="boton" type="submit" name="id_turno" value='{{ turno.id }}' >Ver Turno</button></td>
+                        <!-- <td><button class="boton" type="submit" name="id_turno" value='{{ turno.id }}' >Ver Turno</button></td> -->
+                        <td><a class="link_turno" href='ver_turno_reservado?id_turno={{ turno.id }}'>Consultar</a></td>
                     </tr>                    
                 {% endfor %}
             </table>

@@ -24,7 +24,7 @@ cd tp3-framework/
 # Pasos de la instalación
 php -S localhost:8080
 ```
-Luego ingresar a http://localhost:8888
+Luego ingresar a http://localhost:8080
 
 
 

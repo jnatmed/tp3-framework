@@ -153,7 +153,8 @@ class form_controller
 
         // echo("<pre>");
         // echo("modificacionTurno => arreglo<br>");
-        // var_dump($arreglo);
+        // var_dump($arreglo['dato_persona']);
+        // var_dump($arreglo['dato_turno']);
         // exit();
 
         return view('modificar.turno.view', $arreglo);
@@ -208,18 +209,25 @@ class form_controller
             $this->datos_mal_cargados[] = '#ERROR FECHA TURNO: la fecha del turno debe ser superior o igual al dia actual';    
         }
 
+        if($_FILES['imagen_receta']['size'] > 0){
+            $this->controlImagen($_FILES);
+        }
+
+    }
+
+    public function controlImagen($files){
         $paramsImagen = [
-            'extension' => pathinfo($_FILES["imagen_receta"]["name"], PATHINFO_EXTENSION),
-            'tamanio' => $_FILES['imagen_receta']['size'],
-            'archivo' => file_get_contents($_FILES['imagen_receta']['tmp_name'])
+            'extension' => pathinfo($files["imagen_receta"]["name"], PATHINFO_EXTENSION),
+            'tamanio' => $files['imagen_receta']['size'],
+            'archivo' => file_get_contents($files['imagen_receta']['tmp_name'])
         ];
 
         $this->imgController = new imagenController($paramsImagen);
-
+                
         // echo("<pre>");
         // var_dump($this->imgController);
         // exit(0);
-
+        
         if ($this->imgController->imagenCargada()){
             if($this->imgController->controlTamanioMaximoImagen()){
                 if($this->imgController->controlTipoImagenValida()){
@@ -234,18 +242,16 @@ class form_controller
         }else{
             echo("Imagen no cargada");
         } 
-
-    }
-
+    }    
     public function edicion_turno(){
         if(isset($_POST['baja_turno'])){
-            $this->bajaTurnoReservado();
+            return $this->bajaTurnoReservado();
         }else if(isset($_POST['modificacion_turno'])){
             // echo("<pre>");
             // echo("modificacion<br>");
             // var_dump($_POST['modificacion_turno']);
             // exit(0);
-            $this->modificacionTurno();
+            return $this->modificacionTurno();
         }else{
             echo("<pre>");
             echo("ninguna opcion");
@@ -261,7 +267,7 @@ class form_controller
         // var_dump($_POST);
         // exit();
         $this->turno = $this->dbturnos->bajaTurnoSeleccionado($_POST);
-        $this->verPlanillaTurnos();
+        return $this->verPlanillaTurnos();
     }
 
     public function guardarTurnoModificado(){
@@ -271,7 +277,7 @@ class form_controller
         // exit();        
         $this->controlFormulario($_POST,$_FILES); //     
         $this->dbturnos->actualizarTurno($_POST,$_FILES);
-        $this->planillaController->verPlanillaTurnos();
+        return $this->planillaController->verPlanillaTurnos();
     }
 
     public function guardarFormulario(){
@@ -304,9 +310,12 @@ class form_controller
         $this->dbturnos->insertarTurno($_POST);
     }
 
+
     public function verPlanillaTurnos(){
 
-        return view('listadoTurnosView', array('lista_turnos' => $this->dbturnos->getTurnos()));
+        $turnos = $this->dbturnos->getTurnos();
+        
+        return view('listadoTurnosView', array('lista_turnos' => $turnos));
 
     }
 
@@ -323,9 +332,9 @@ class form_controller
         // echo("reservarTurno--<br>");
         // var_dump($_POST);
 
-            $this->verPlanillaTurnos();
+            return $this->verPlanillaTurnos();
         }else{
-            $this->corregirIngreso();
+           return $this->corregirIngreso();
         }
     }
 

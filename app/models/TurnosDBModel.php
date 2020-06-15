@@ -148,29 +148,53 @@ class TurnosDBModel
         }
     }
     public function actualizarTurno($valores,$img_receta){
-        echo("<pre>");
-        echo("insertarTurno<br>");
-        var_dump($img_receta);
-        exit(); 
+        // echo("<pre>");
+        // echo("insertarTurno<br>");
+        // var_dump($img_receta);
+        // // var_dump($valores);
+        // echo($img_receta['imagen_receta']['size']);
+        // exit(); 
         // $this->imgController = new imagenController($img_receta);
         // if($this->imgController->imagenCargada()){
         //     $this->imgController->codificar();
         // }
         $consulta = "UPDATE `turnos` SET 
-                            `fecha_turno`=':fecha_turno',
-                            `hora_turno`=':hora_turno',
-                            `nombre_paciente`=':nombre_paciente',
-                            `email`=':email',
-                            `telefono`=':telefono',
-                            `fecha_nacimiento`=':fecha_nacimiento',
-                            `edad`=':edad',
-                            `talla_calzado`=':talla_calzado',
-                            `altura`=':altura',
-                            `color_pelo`=':color_pelo', 
-                            `imagen`=':archivo_imagen',
-                            `tipo_imagen`=':tipo_imagen' WHERE id = ':id'";
+                            `fecha_turno`=:fecha_turno,
+                            `hora_turno`=:hora_turno,
+                            `nombre_paciente`=:nombre_paciente,
+                            `email`=:email,
+                            `telefono`=:telefono,
+                            `fecha_nacimiento`=:fecha_nacimiento,
+                            `edad`=:edad,
+                            `talla_calzado`=:talla_calzado,
+                            `altura`=:altura,
+                            `color_pelo`=:color_pelo, 
+                            `imagen`=:archivo_imagen,
+                            `tipo_imagen`=:tipo_imagen WHERE `id` = :id";
+
+        if($img_receta['imagen_receta']['size']<>0){
+            $archivo_imagen = file_get_contents($img_receta['imagen_receta']['tmp_name']);
+            $tipo_imagen = pathinfo($img_receta['imagen_receta']['name'],PATHINFO_EXTENSION);
+            // echo("HAY NUEVA IMAGEN");
+        }else{
+            if(array_key_exists('archivo_imagen',$valores)){
+                $archivo_imagen = base64_decode($valores['archivo_imagen']);
+                $tipo_imagen = $valores['tipo_imagen'];
+                // echo("SI HAY IMAGEN GUARDADA");
+            }else{
+                $archivo_imagen = NULL;
+                $tipo_imagen = NULL;
+                // echo("NO HAY IMAGEN GUARDADA");
+            }
+        }                            
+
+        // echo("<pre>");
+        // var_dump($archivo_imagen);
+        // var_dump($tipo_imagen);
+        // exit();
 
         $array_consulta = [
+            ':id' => $valores['id'],
             ':fecha_turno' => $valores['fecha_turno'],
             ':hora_turno' => $valores['hora_turno'],
             ':nombre_paciente' => $valores['nombre_paciente'],
@@ -181,8 +205,8 @@ class TurnosDBModel
             ':talla_calzado' => $valores['talla_calzado'],
             ':altura' => $valores['altura'],
             ':color_pelo' => $valores['color_pelo'],
-            ':archivo_imagen' => base64_decode($valores['archivo_imagen']),
-            ':tipo_imagen' => $valores['tipo_imagen']   
+            ':archivo_imagen' => $archivo_imagen,
+            ':tipo_imagen' => $tipo_imagen   
         ]; 
         try{
             // $this->motrarMsj($consulta);
@@ -190,9 +214,12 @@ class TurnosDBModel
             // echo($p[0]);
             $sql = $this->db->prepare($consulta);
             // $sql->execute($valores);    
-            $sql->execute($array_consulta);    
-            unset($valores['archivo_imagen']);
-            unset($valores['tipo_imagen']);
+            $sql->execute($array_consulta);   
+             
+            if(array_key_exists('archivo_imagen',$valores)){
+                unset($valores['archivo_imagen']);
+                unset($valores['tipo_imagen']);
+            }
             unset($valores['corregir_turno']);
             $this->logger->info("MODIFICACION TURNO:",$valores);   
         }catch(Exception $e){
@@ -202,7 +229,7 @@ class TurnosDBModel
 
     public function bajaTurnoSeleccionado($post){
         $consulta = "DELETE FROM turnos WHERE id = ?;";
-        echo("id turno: ".$post['baja_turno']."<br>");
+        // echo("id turno: ".$post['baja_turno']."<br>");
         // echo("<pre>");
         // var_dump($post);
         // exit();
@@ -210,7 +237,7 @@ class TurnosDBModel
             $sql = $this->db->prepare($consulta);
             // $sql->bindColumn(':id',$id_turno);
             if($sql->execute([$post['baja_turno']]) === TRUE){
-                echo("registro ha sido eliminado, id=>{$post['baja_turno']}");
+                // echo("registro ha sido eliminado, id=>{$post['baja_turno']}");
 
                 $this->logger->info("BAJA TURNO:", $post);   
 

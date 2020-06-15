@@ -16,12 +16,38 @@ input, label {
     /* margin: 8px 0; */
     box-sizing: border-box;
   } 
+body{
+  align-items: center;
+}
+  .ingreso_datos_a_confirmar{
+  /* width: 500px;
+  height: 500px; */
+  /* display: -webkit-flex;
+  display: -ms-flexboxs; */
+  display: block;
+  flex-direction: column;
+  flex-wrap: wrap ;
+  /* flex-flow: row wrap; */
+  justify-content: center;
+}
 
+.datos_mostrados{
+  display: -webkit-flex;
+  display: -ms-flexboxs;
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+}
+
+.titulo{
+  align-self: center;
+}
 .boton{
   display: inline-block;
   background-color: #009645;
   border-radius: 16px;
   padding: 5px;
+  align-self: center;
   color: white;
 }
 
@@ -67,11 +93,6 @@ h1{
     color: white;
 }
 
-#nombre_paciente{
-  /* grid-area: nom_paciente; */
-  /* background-color:rgb(0, 110, 199); */
-  text-align: center;
-}
 
 /* .panel{
   /* grid-area: panel; */
@@ -123,10 +144,22 @@ input, label{
   display: none;
 }
 
+td{
+  text-align: center;
+}
 /* 
 label{
   display: block;
 } */
+
+.link_turno{
+  color: black;
+  text-align: center;
+}
+.link_turno:hover{
+  color: #009645;
+  size: 16px;
+}
 
 .receta_cargada{
   /* grid-area: img_receta; */
@@ -154,6 +187,10 @@ footer{
   background-color: lightcoral;
 }
 
+.formulario_oculto{
+  align-content: center;
+  text-align: center;
+}
 
 /* .contenido{
   display: grid;

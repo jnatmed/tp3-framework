@@ -11,63 +11,63 @@
     <body>
         <main>
         {% include 'partials/cabecera.view.php' %}
-        <h1>Reserva de Turno</h1>
-        <form action="/turno_confirmado" method = 'POST' enctype="multipart/form-data">
-            <table id="turnos">
-                <tr>
-                    <th>Nombre del Paciente</th>
-                    <th>Email</th>
-                    <th>Telefono</th>
-                    <th>Edad</th>
-                    <th>Talla del Calzado</th>
-                    <th>Altura</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Color de Pelo</th>
-                    <th>Fecha del Turno</th>
-                    <th>Horario del Turno</th>
-                    <th>Receta Cargada</th>
-                </tr>
-                <tr>
-                    <td>{{ turno.nombre_paciente }}</td> 
-                    <td>{{ turno.email }}</td> 
-                    <td>{{ turno.telefono }}</td> 
-                    <td>{{ turno.edad }}</td> 
-                    <td>{{ turno.talla_calzado }}</td> 
-                    <td>{{ turno.altura }}</td> 
-                    <td>{{ turno.fecha_nacimiento }}</td> 
-                    <td>{{ turno.color_pelo }}</td> 
-                    <td>{{ turno.fecha_turno }}</td> 
-                    <td>{{ turno.hora_turno }}</td> 
-                    <td><img class="receta_cargada" src="data:image/{{ tipo_imagen }};base64,{{ archivo_imagen }}"></td>
-                    
-                </tr>                                                        
-            </table>
-                <input class="input_oculto" type="text" value="{{ turno.nombre_paciente }}" name="nombre_paciente" >
-                <input class="input_oculto" type="text" value="{{ turno.email }}" name="email" >
-                <input class="input_oculto" type="text" value="{{ turno.telefono }}" name="telefono" >
-                <input class="input_oculto" type="text" value="{{ turno.edad }}" name="edad" >
-                <input class="input_oculto" type="text" value="{{ turno.talla_calzado }}" name="talla_calzado" >
-                <input class="input_oculto" type="text" value="{{ turno.altura }}" name="altura" >
-                <input class="input_oculto" type="text" value="{{ turno.fecha_nacimiento }}" name="fecha_nacimiento" >
-                <input class="input_oculto" type="text" value="{{ turno.color_pelo }}" name="color_pelo" >
-                <input class="input_oculto" type="text" value="{{ turno.fecha_turno }}" name="fecha_turno" >
-                <input class="input_oculto" type="text" value="{{ turno.hora_turno }}" name="hora_turno" >
-                <input class="input_oculto" type="hidden" name="archivo_imagen" value="{{ archivo_imagen }}">
-                <input class="input_oculto" type="text" value="{{ tipo_imagen }}" name="tipo_imagen" >
-        {% if datos_mal_cargados is not empty %}
-            <input class="boton" type="submit" name='enviar' value="Confirmar Turno" disabled>
-            <input class="boton" type="submit" name='corregir' value="Corregir Turno">
-        </form>    
-            <ul> Errores Encontrados:
-            {% for error in datos_mal_cargados %}    
-                <li>Error: {{ error }}</li>
-            {% endfor %}    
-            </ul>
-        {% else %}    
-                <input class="boton" type="submit" name='enviar' value="Confirmar Turno">
-            </form>    
-            <h1>Datos correctamente cargados</h1>
-        {% endif %}    
+        <section class="ingreso_datos_a_confirmar">
+            <article class="titulo">
+                <h1>Reserva de Turno</h1>
+            </article>
+            <article class="datos_mostrados">
+                <fieldset class="persona">
+                    <legend>
+                         <h4>Datos del Paciente : {{ turno.nombre_paciente }}</h4>
+                    </legend>
+                    <h5>Telefono : {{ turno.telefono }}</h5>
+                    <h5>Email : {{ turno.email }}</h5>
+                    <h5>Edad : {{ turno.edad }}</h5>
+                    <h5>Talla del Calzado : {{ turno.talla_calzado }}</h5>
+                    <h5>Altura : {{ turno.altura }}</h5>
+                    <h5>Fecha de Nacimiento : {{ turno.fecha_nacimiento }}</h5>
+                    <h5>Color de Pelo : {{ turno.color_pelo }}</h5>
+                </fieldset>
+                <fieldset class="turno">
+                    <legend>
+                        <h4>Datos del Turno</h4>
+                    </legend>
+                    <h5>Fecha del Turno : {{ turno.fecha_turno }}</h5>
+                    <h5>Hora del Turno : {{ turno.hora_turno }}</h5>
+                    <img class="receta_cargada" src="data:image/{{ tipo_imagen }};base64,{{ archivo_imagen }}">
+                </fieldset>
+            </article>    
+    
+            <article class="datos_ocultos">
+                <form action="/turno_confirmado" method = 'POST' enctype="multipart/form-data">
+                    <input class="input_oculto" type="text" value="{{ turno.nombre_paciente }}" name="nombre_paciente" >
+                    <input class="input_oculto" type="text" value="{{ turno.email }}" name="email" >
+                    <input class="input_oculto" type="text" value="{{ turno.telefono }}" name="telefono" >
+                    <input class="input_oculto" type="text" value="{{ turno.edad }}" name="edad" >
+                    <input class="input_oculto" type="text" value="{{ turno.talla_calzado }}" name="talla_calzado" >
+                    <input class="input_oculto" type="text" value="{{ turno.altura }}" name="altura" >
+                    <input class="input_oculto" type="text" value="{{ turno.fecha_nacimiento }}" name="fecha_nacimiento" >
+                    <input class="input_oculto" type="text" value="{{ turno.color_pelo }}" name="color_pelo" >
+                    <input class="input_oculto" type="text" value="{{ turno.fecha_turno }}" name="fecha_turno" >
+                    <input class="input_oculto" type="text" value="{{ turno.hora_turno }}" name="hora_turno" >
+                    <input class="input_oculto" type="hidden" name="archivo_imagen" value="{{ archivo_imagen }}">
+                    <input class="input_oculto" type="text" value="{{ tipo_imagen }}" name="tipo_imagen" >
+                {% if datos_mal_cargados is not empty %}
+                    <input class="boton" type="submit" name='enviar' value="Confirmar Turno" disabled>
+                    <input class="boton" type="submit" name='corregir' value="Corregir Turno">
+                </form>    
+                    <ul> Errores Encontrados:
+                    {% for error in datos_mal_cargados %}    
+                        <li>Error: {{ error }}</li>
+                    {% endfor %}    
+                    </ul>
+                {% else %}    
+                        <input class="boton" type="submit" name='enviar' value="Confirmar Turno">
+                    </form>    
+                    <h1>Datos correctamente cargados</h1>
+                {% endif %}    
+            </article>
+        </section>
       </main>     
       {% include "partials/footer.view.php" %}
 

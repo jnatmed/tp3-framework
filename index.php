@@ -11,9 +11,13 @@ use App\Core\Exceptions\RouteNotFoundException as RouteNotFoundException;
 
 $logger = App::get('logger');
 
+// echo("<pre>");
+// var_dump(Request::uri());
+// var_dump($_GET);
+
 try {
     $render = Router::load('app/routes.php')
-        ->direct(Request::uri(), Request::method());
+        ->direct(Request::uri(), Request::method());        
     $logger->info('Status Code: 200');
 } catch (RouteNotFoundException $e) {
     http_response_code(404);

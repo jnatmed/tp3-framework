@@ -10,47 +10,40 @@
     <body>
         <main>
         {% include 'partials/cabecera.view.php' %}
-        <h1>Turno del Paciente {{ turno.nombre_paciente }}</h1>
-        <form action="edicion_turno" method='POST'>
-            <table id="turnos">
-                <tr>
-                    <th>Fecha del Turno</th>
-                    <th>Horario del Turno</th>
-                    <th>Nombre del Paciente</th>
-                    <th>Telefono</th>
-                    <th>Email</th>
-                    <th>Edad</th>
-                    <th>Talla del Calzado</th>
-                    <th>Altura</th>
-                    <th>Fecha de Nacimiento</th>
-                    <th>Color de Pelo</th>
-                    <th>Receta Cargada</th>
-                </tr>
-                    <tr>
-                        <td>{{ turno.fecha_turno }}</td>
-                        <td>{{ turno.hora_turno }}</td>
-                        <td>{{ turno.nombre_paciente }}</td> 
-                        <td>{{ turno.telefono }}</td> 
-                        <td>{{ turno.email }}</td>
-                        <td>{{ turno.edad }}</td> 
-                        <td>{{ turno.talla_calzado }}</td>                
-                        <td>{{ turno.altura }}</td>                
-                        <td>{{ turno.fecha_nacimiento }}</td>                
-                        <td>{{ turno.color_pelo }}</td>                
-                        <td><img class="receta_cargada" src="data:image/{{ turno.tipo_imagen }};base64,{{ turno.imagen }}"></td>
-                    </tr>
-            </table>
-                <input class="input_oculto" type="text" value="{{ turno.nombre_paciente }}" name="nombre_paciente" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.email }}" name="nombre_paciente" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.telefono }}" name="email" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.edad }}" name="telefono" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.talla_calzado }}" name="edad" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.altura }}" name="talla_calzado" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.fecha_nacimiento }}" name="altura" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.color_pelo }}" name="fecha_nacimiento" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.fecha_turno }}" name="color_pelo" hidden="true">
-                <input class="input_oculto" type="text" value="{{ turno.hora_turno }}" name="fecha_turno" hidden="true">
+        <div class="datos_mostrados">
+            <fieldset class="persona">
+                <legend>
+                    <h4>Datos del Paciente : {{ turno.nombre_paciente }}</h4>
+                </legend>
+                <h5>Telefono : {{ turno.telefono }}</h5>
+                <h5>Email : {{ turno.email }}</h5>
+                <h5>Edad : {{ turno.edad }}</h5>
+                <h5>Talla del Calzado : {{ turno.talla_calzado }}</h5>
+                <h5>Altura : {{ turno.altura }}</h5>
+                <h5>Fecha de Nacimiento : {{ turno.fecha_nacimiento }}</h5>
+                <h5>Color de Pelo : {{ turno.color_pelo }}</h5>
+            </fieldset>
+            <fieldset class="turno">
+                <legend>
+                    <h4>Datos del Turno</h4>
+                </legend>
+                <h5>Fecha del Turno : {{ turno.fecha_turno }}</h5>
+                <h5>Hora del Turno : {{ turno.hora_turno }}</h5>
+                <img class="receta_cargada" src="data:image/{{ turno.tipo_imagen }};base64,{{ turno.imagen }}">
+            </fieldset>
+        </div>    
 
+        <form class="formulario_oculto" action="edicion_turno" method='POST'>
+            <input class="input_oculto" type="text" value="{{ turno.nombre_paciente }}" name="nombre_paciente" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.email }}" name="nombre_paciente" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.telefono }}" name="email" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.edad }}" name="telefono" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.talla_calzado }}" name="edad" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.altura }}" name="talla_calzado" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.fecha_nacimiento }}" name="altura" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.color_pelo }}" name="fecha_nacimiento" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.fecha_turno }}" name="color_pelo" hidden="true">
+            <input class="input_oculto" type="text" value="{{ turno.hora_turno }}" name="fecha_turno" hidden="true">
             <button class="boton" type="submit" name='baja_turno' value="{{ turno.id }}" >Eliminar Turno</button>
             <button class="boton" type="submit" name='modificacion_turno' value="{{ turno.id }}" >Modificar Turno</button>
         </form>
