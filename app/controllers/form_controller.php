@@ -278,13 +278,8 @@ class form_controller
             // var_dump($_POST['modificacion_turno']);
             // exit(0);
             return $this->modificacionTurno();
-        }else{
-            echo("<pre>");
-            echo("ninguna opcion");
-            var_dump($_POST['modificacion_turno']);
-            exit(0);
         }
-    }
+}
 
     public function bajaTurnoReservado()
     {
