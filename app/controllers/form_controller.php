@@ -297,17 +297,25 @@ class form_controller
     }
 
     public function guardarTurnoModificado(){
-        // echo("<pre>");
-        // echo("guardarTurnoModificado<br>");
-        // var_dump($_POST);
-        // exit();        
-        $this->controlFormulario($_POST,$_FILES); //  
 
-        // echo("<pre>");
-        // echo("guardarTurnoModificado<br>");
-        // var_dump($this->datos_mal_cargados);
-        // exit();        
+        $this->controlFormulario($_POST,$_FILES); 
         
+        /**
+         * aca luego del control del formulario
+         * tengo que preguntar de estado anterior vengo. 
+         * si el $_POST['id'] == -1 significa que es un nuevo
+         * ingreso y tuvo un error por eso entro en esta rama 
+         * 
+         * si es distinto de -1 es un turno que ya tiene id
+         * y el estado anterior se pulso la opcion de modificacion de
+         * turno. 
+         * 
+         * si se hizo una correccion pero aun hay datos mal cargados
+         * se vuelve a controlar y en caso de seguir habiendo errores
+         * se vuelven a cargar y se mandar de nuevo a la rama de correccion
+         * en la opcion 
+         *       =>   $this->corregirIngreso()
+         */
         if(empty($this->datos_mal_cargados)){
             if($_POST['id']<>-1){
                 $this->dbturnos->actualizarTurno($_POST,$_FILES);
@@ -316,10 +324,17 @@ class form_controller
             }
             return $this->planillaController->verPlanillaTurnos();
         }else{
+
+            /**
+             * cuando el formulario vuelve a ser ingresado por correccion
+             * aun no paso por el control de error. el arreglo $_POST
+             * no tiene las keys de errores, hay que agregarlas.
+             * 
+             * luego se pasan al metodo de corregirIngreso()
+             */
             foreach ($this->datos_mal_cargados as $error => $detalle){
                 $_POST[$error] = $detalle;
             }
-            // var_dump($_POST);
             return $this->corregirIngreso();    
         }
     }
