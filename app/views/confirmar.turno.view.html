@@ -39,7 +39,7 @@
             </article>    
     
             <article class="datos_ocultos">
-                <form action="/turno_confirmado" method = 'POST' enctype="multipart/form-data">
+                <form class="form_reserva" action="/turno_confirmado" method = 'POST' enctype="multipart/form-data">
                     <input class="input_oculto" type="text" value="{{ turno.nombre_paciente }}" name="nombre_paciente" >
                     <input class="input_oculto" type="text" value="{{ turno.email }}" name="email" >
                     <input class="input_oculto" type="text" value="{{ turno.telefono }}" name="telefono" >
@@ -53,12 +53,15 @@
                     <input class="input_oculto" type="hidden" name="archivo_imagen" value="{{ archivo_imagen }}">
                     <input class="input_oculto" type="text" value="{{ tipo_imagen }}" name="tipo_imagen" >
                 {% if datos_mal_cargados is not empty %}
-                    <input class="boton" type="submit" name='enviar' value="Confirmar Turno" disabled>
+                    {% for error,detalle_error in datos_mal_cargados %}    
+                        <input class="input_oculto" type="text" value="{{ detalle_error }}" name="{{ error }}" >
+                    {% endfor %}   
+                    <input class="boton_disabled" type="submit" name='enviar' value="Confirmar Turno" disabled>
                     <input class="boton" type="submit" name='corregir' value="Corregir Turno">
                 </form>    
-                    <ul> Errores Encontrados:
-                    {% for error in datos_mal_cargados %}    
-                        <li>Error: {{ error }}</li>
+                    <ul> <h1 class="h1error">Errores Encontrados:</h1>
+                    {% for error,detalle_error in datos_mal_cargados %}    
+                        <li>Error: {{ detalle_error }}</li>
                     {% endfor %}    
                     </ul>
                 {% else %}    

@@ -19,4 +19,8 @@ class ProjectController
     {
         return view('internal-error');
     }
+
+    public function turnoNoEncontrado(){
+        return view('turno-not-found');
+    }
 }

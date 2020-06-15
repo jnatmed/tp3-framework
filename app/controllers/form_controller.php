@@ -101,18 +101,43 @@ class form_controller
         $this->agregar_dato('fecha_turno', 'required','date','',$_POST['fecha_turno']);
         $this->agregar_dato('hora_turno', '', 'horario_turno',$this->rangos['horarios_atencion'],$_POST['hora_turno']);
 
+        /**
+         * el `id` => puede ser -1 porque al ser un nuevo ingreso, todavia no tiene un id de turno
+         * a parte, como uso la misma vista `modificar.turno.view` tengo que diferenciar
+         * cuando envio la informacion al render, si se trata de una correccion de ingreso
+         * o de una modificacion que quiere hacer el usuario 
+         */
+
         $arreglo = [
             'dato_persona' => $this->lista_datos, 
             'dato_turno' => $this->lista_datos_del_turno, 
             'id' => -1,
-            'tipo_imagen' => pathinfo($_FILES["imagen_receta"]["name"], PATHINFO_EXTENSION),
-            'archivo_imagen' => base64_encode(file_get_contents($_FILES['imagen_receta']['tmp_name']))
+            'error_imagen' => array_key_exists("error_imagen", $_POST) ? $_POST['error_imagen'] : false,
+            'error_fecha_turno' => array_key_exists("error_fecha_turno", $_POST) ? $_POST['error_fecha_turno'] : false,
+            'error_dia_turno' => array_key_exists("error_dia_turno", $_POST) ? $_POST['error_dia_turno'] : false,
+            'error_edad' => array_key_exists("error_edad", $_POST) ? $_POST['error_edad'] : false,
         ];
+
+        /**
+         * dentro de los input ocultos, tambien envio el archivo de la imagen en base64, 
+         * si el mismo fue cargado y no tiene errores de imagen entonces lo tengo que volver
+         * a mandar para que sea ingresado
+         */
+        if(!empty($_POST['archivo_imagen']) && !array_key_exists("error_imagen",$_POST)){
+                $arreglo['tipo_imagen'] = $_POST['tipo_imagen'];
+                $arreglo['archivo_imagen'] = $_POST['archivo_imagen'];
+
+                // echo("<pre>");
+                // echo("modificacionTurno => arreglo<br>");
+                // var_dump($arreglo);
+                // exit();
+        }
 
         // echo("<pre>");
         // echo("modificacionTurno => arreglo<br>");
         // var_dump($arreglo);
         // exit();
+
 
         return view('modificar.turno.view', $arreglo);
     }
@@ -148,7 +173,8 @@ class form_controller
             'dato_turno' => $this->lista_datos_del_turno, 
             'id' => $_POST['modificacion_turno'],
             'archivo_imagen' => base64_encode($valores['imagen']),
-            'tipo_imagen' => $valores['tipo_imagen']            
+            'tipo_imagen' => $valores['tipo_imagen'],
+            'datos_mal_cargados' => $this->datos_mal_cargados       
         ];
 
         // echo("<pre>");
@@ -200,13 +226,13 @@ class form_controller
         $dia_turno = date("l",$fecha_turno);
 
         if (($edad_ingresada + $año_nacimiento) < $año_actual){ // comprobar edad y fecha nacimiento
-            $this->datos_mal_cargados[] = '#ERROR EDAD FECHA NACIMIENTO: la edad debe ser consistente con la fecha de nacimiento';
+            $this->datos_mal_cargados['error_edad'] = '#ERROR EDAD FECHA NACIMIENTO: la edad debe ser consistente con la fecha de nacimiento';
         }
         if(date("l",$fecha_turno) == 'Sunday'){ // que no sea dia domingo
-            $this->datos_mal_cargados[] = '#ERROR DIA TURNO: la fecha del turno no puede ser domingo';
+            $this->datos_mal_cargados['error_dia_turno'] = '#ERROR DIA TURNO: la fecha del turno no puede ser domingo';
         }
         if( $fecha_actual > $fecha_turno){ // que sea superior a la fecha actual
-            $this->datos_mal_cargados[] = '#ERROR FECHA TURNO: la fecha del turno debe ser superior o igual al dia actual';    
+            $this->datos_mal_cargados['error_fecha_turno'] = '#ERROR FECHA TURNO: la fecha del turno debe ser superior o igual al dia actual';    
         }
 
         if($_FILES['imagen_receta']['size'] > 0){
@@ -234,10 +260,10 @@ class form_controller
                     $this->datos_reserva['tipo_imagen'] = $this->imgController->getTipoImagen();
                     $this->datos_reserva['archivo_imagen'] = $this->imgController->getArchivoImagen();
                 }else{
-                    $this->datos_mal_cargados[] = "#ERROR IMAGEN: Tipo de imagen no valido.";
+                    $this->datos_mal_cargados['error_imagen'] = "#ERROR IMAGEN: Tipo de imagen no valido.";
                 }    
             }else{
-                $this->datos_mal_cargados[] = "#ERROR IMAGEN: Imagen no cargada, Tamanio de carga Excedido => ".$this->imgController->getTamanioEnMB();
+                $this->datos_mal_cargados['error_imagen'] = "#ERROR IMAGEN: Imagen no cargada, Tamanio de carga Excedido => ".$this->imgController->getTamanioEnMB();
              }
         }else{
             echo("Imagen no cargada");
@@ -273,11 +299,29 @@ class form_controller
     public function guardarTurnoModificado(){
         // echo("<pre>");
         // echo("guardarTurnoModificado<br>");
-        // var_dump($_FILES);
+        // var_dump($_POST);
         // exit();        
-        $this->controlFormulario($_POST,$_FILES); //     
-        $this->dbturnos->actualizarTurno($_POST,$_FILES);
-        return $this->planillaController->verPlanillaTurnos();
+        $this->controlFormulario($_POST,$_FILES); //  
+
+        // echo("<pre>");
+        // echo("guardarTurnoModificado<br>");
+        // var_dump($this->datos_mal_cargados);
+        // exit();        
+        
+        if(empty($this->datos_mal_cargados)){
+            if($_POST['id']<>-1){
+                $this->dbturnos->actualizarTurno($_POST,$_FILES);
+            }else {
+                $this->dbturnos->insertarTurno($_POST);
+            }
+            return $this->planillaController->verPlanillaTurnos();
+        }else{
+            foreach ($this->datos_mal_cargados as $error => $detalle){
+                $_POST[$error] = $detalle;
+            }
+            // var_dump($_POST);
+            return $this->corregirIngreso();    
+        }
     }
 
     public function guardarFormulario(){

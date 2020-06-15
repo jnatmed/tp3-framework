@@ -54,6 +54,9 @@
                        min="{{ dato_persona.edad.restriccion.min }}" 
                        max="{{ dato_persona.edad.restriccion.max }}" 
                        {{ dato_persona.edad.obligatorio }}>
+                       {% if not error_edad == false %}
+                            <h6 class="h6corregir" > * Corregir Edad</h6>
+                       {% endif %}
     
                 <label for="{{ dato_persona.talla_calzado.nombre_campo }}">Talla de Calzado</label>
                 <input type="number" 
@@ -81,6 +84,9 @@
                        id="{{ dato_persona.fecha_nacimiento.nombre_campo }}" 
                        value="{{ dato_persona.fecha_nacimiento.valor }}" 
                        {{ dato_persona.fecha_nacimiento.obligatorio }} >
+                       {% if not error_edad == false %}
+                            <h6 class="h6corregir" > * Corregir Fecha</h6>
+                       {% endif %}
                                
                 <label for="{{ dato_persona.color_pelo.nombre_campo }}">Color de Pelo</label>
                 <select name="{{ dato_persona.color_pelo.nombre_campo }}">
@@ -98,9 +104,12 @@
                 <label for="{{ dato_turno.fecha_turno.nombre_campo }}">Fecha del Turno</label>
                 <input type="date" 
                        name="{{ dato_turno.fecha_turno.nombre_campo }}" 
-                       value="{{ dato_turno.fecha_turno.valor }}"
                        id="{{ dato_turno.fecha_turno.nombre_campo }}" 
+                       value="{{ dato_turno.fecha_turno.valor }}"
                        {{ dato_turno.fecha_turno.obligatorio }} >
+                       {% if not error_fecha_turno == false %}
+                            <h6 class="h6corregir" > * Corregir Fecha Turno</h6>
+                       {% endif %}
     
                 <label for="{{ dato_turno.hora_turno.nombre_campo }}">Hora del Turno</label>                     
                 <select name="{{ dato_turno.hora_turno.nombre_campo }}">
@@ -118,25 +127,15 @@
              
              <input class="input_oculto" type="hidden" name="archivo_imagen" value="{{ archivo_imagen }}">
              <input class="input_oculto" type="hidden" name="tipo_imagen" value="{{ tipo_imagen }}"  >
-
+             <input class="input_oculto" type="text" name ='id' value = {{ id }}>
              {% if id != -1 %}
-                <input class="input_oculto" 
-                        type="text" 
-                        name ='id' 
-                        value = {{ id }}>
+                
                 <input type="submit" 
                         name='corregir_turno' 
                         value= "corregir" 
                         class="btn_corregir">
               </form> 
             </article>
-              <section  class = "receta_cargada">  
-                <label for="receta_cargada">Receta cargada en el Sistema</label>
-                <img src="data:image/{{ tipo_imagen }};base64,{{ archivo_imagen }}" 
-                     alt="receta_cargada" 
-                     class="receta_cargada">                    
-              </section>
-            </section>  
           {% else %}
                 <input type="submit" 
                        name='corregir_turno' 
@@ -144,8 +143,16 @@
                        class="btn_corregir">
                 </form>
               </article>
-            </section>
           {% endif %}   
+          <section  class = "receta_cargada">  
+              {% if not error_imagen == false %}
+                   <h6 class="h6corregir" >* Volver a Cargar Imagen. Error: {{ error_imagen }}</h6>  
+              {% endif %}
+              <img src="data:image/{{ tipo_imagen }};base64,{{ archivo_imagen }}" 
+                   alt="receta_cargada" 
+                   class="receta_cargada">                    
+            </section>
+          </section>  
 
     {% include "partials/footer.view.php" %}
     </main>

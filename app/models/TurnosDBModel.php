@@ -68,22 +68,29 @@ class TurnosDBModel
         // echo("<pre>");
         // echo("getTurnoSeleccionado<br>");
         // var_dump($id_turno);
-        $sql = "SELECT * FROM turnos WHERE id ='{$id_turno}'";
+        $sql = "SELECT * FROM turnos WHERE `id` =:id";
+        $array_consulta = [':id' => $id_turno];
         try{
-            $result = $this->db->query($sql);
+            $result = $this->db->prepare($sql);
+            $result->execute($array_consulta);
             $result->setFetchMode(PDO::FETCH_ASSOC);
             foreach ($result as $res){
                 $turno[] = $res;
             }
             // echo("<pre>");
             // echo("getTurnoSeleccionado<br>");
-            // var_dump($resu);
-            // exit();
-            return $turno;
-            $this->db = NULL;    
+            if(isset($turno)){
+                return $turno;
+                $this->db = NULL;    
+            }else{
+                return array();
+            };
         }catch(Exception $e){
             echo($e);
-        }
+        }catch(PDOException $Exception){
+            throw new MyDatabaseException( $Exception->getMessage( ) , (int)$Exception->getCode( ) );
+        } //catch( PDOException $Exception ) {
+            // exit();
     }
 
     public function insertarTurno($valores){

@@ -44,12 +44,14 @@ class planillaTurnosController
         
         // echo("<pre>");    
         // echo("verTurnoReservado<br>");    
-        // var_dump($this->turno[0]);
+        // var_dump(!empty($this->turno));
         // exit();
-        
-        $this->turno[0]['imagen'] = base64_encode($this->turno[0]['imagen']); 
-                
-        return view('consulta.turno.view', array('turno' => $this->turno[0]));
+        if(!empty($this->turno)){
+            $this->turno[0]['imagen'] = base64_encode($this->turno[0]['imagen']); 
+            return view('consulta.turno.view', array('turno' => $this->turno[0]));
+        }else{
+            return redirect('turno-no-encontrado');
+        }                
 
     }
     public function bajaTurnoReservado()

@@ -51,6 +51,15 @@ body{
   color: white;
 }
 
+.boton_disabled{
+  display: inline-block;
+  background-color: black;
+  border-radius: 16px;
+  padding: 5px;
+  align-self: center;
+  color: white;
+}
+
 #turnos{
     font-family: 'Swiss 721 Bold Condensed BT', 'Arial-Narrow', sans-serif;
     /* border-collapse: collapse;
@@ -93,6 +102,9 @@ h1{
     color: white;
 }
 
+.error_pagina{
+  text-align: center;
+}
 
 /* .panel{
   /* grid-area: panel; */
@@ -192,13 +204,19 @@ footer{
   text-align: center;
 }
 
-/* .contenido{
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 100vh min-content 1fr max-content;
-  grid-template-areas: 
-  'panel'
-  'form_cargado img_receta'
-  'footer'; 
-  background-color: rgb(0, 110, 199);
-} */
+.form_reserva{
+  text-align: center;
+}
+
+
+.h1error, li{
+  font-size: x-large;
+}
+.titulo{
+  text-align: center;
+  font-size: x-large;
+}
+
+.h6corregir{
+  font-weight: bold;
+}

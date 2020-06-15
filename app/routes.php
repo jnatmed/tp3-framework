@@ -15,3 +15,4 @@
 
     $router->get('not_found', 'ProjectController@notFound');
     $router->get('internal_error', 'ProjectController@internalError');
+    $router->get('turno-no-encontrado', 'ProjectController@turnoNoEncontrado');
